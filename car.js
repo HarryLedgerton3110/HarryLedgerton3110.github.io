@@ -5,12 +5,32 @@ var targetAmount = 4;
 var reloadTime = 60;
 var reloadTimer = 0;
 var canShoot = true;
+var spriteSize = 32;
+var tankSpriteSheet = new Image();
+tankSpriteSheet.src = "TankSpriteSheet.png";
+var gunSpriteSheet = new Image();
+gunSpriteSheet.src = "GunSpriteSheet.png";
+var tankRow = 0;
+var tankCol = 0;
+var gunRow = 0;
+var gunCol = 0;
+var tick = 0;
+
 
 function startGame(){
     myGameArea.start();
-    myCar = new car(30,50, "#015708" , 100,100);
+    myCar = new car(48,48, "#015708" , 100,100);
+
     
 }
+
+function spritePostoImgPos(row,col){
+    return {
+        x:(col * spriteSize),
+        y:(row * spriteSize)
+    }
+}
+
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -27,6 +47,12 @@ var myGameArea = {
         })
         window.addEventListener('keyup', function(e){
             myGameArea.keys[e.keyCode] = false;
+        })
+        document.addEventListener("mousemove", function(e){
+            myGameArea.mouseX = e.pageX;
+            myGameArea.mouseY = e.pageY;
+            console.log("Y:", myGameArea.mouseX);
+
         })
     },
     clear : function(){
@@ -50,17 +76,26 @@ function car(width, height, color, x, y){
     this.turnSpeed = 0;
     this.x = x;
     this.y = y;
+    this.gunAngle = 0;
    
     this.update = function(){
         ctx = myGameArea.context;
         ctx.save();
-        ctx.translate(this.x,this.y);
+        ctx.translate(this.x + this.width/2,this.y + this.height/2);
         ctx.rotate(this.angle);
         ctx.fillStyle = color;
-        ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.width / -2 + (this.width/2 - this.width/ 6), this.height / -2 - (this.height/8), this.width/ 3 , this.height * 0.75);
+        ctx.drawImage(tankSpriteSheet, 0, 0, spriteSize,spriteSize,this.width/2 * (-1), this.height /2 *(-1), spriteSize*1.5, spriteSize*1.5);
         ctx.restore();  
+    }
+    this.gunUpdate = function(){
+        this.gunAngle = Math.atan2((myGameArea.mouseY - this.y), (myGameArea.mouseX - this.x));
+        ctx = myGameArea.context;
+        ctx.save();
+        ctx.translate(this.x + 24,this.y + 24);
+        ctx.rotate(this.gunAngle);
+        ctx.fillStyle = color;
+        ctx.drawImage(gunSpriteSheet, 0, 0, spriteSize,spriteSize,this.width/-2, this.height/-2, spriteSize*1.5, spriteSize*1.5);
+        ctx.restore(); 
     }
     this.move = function(){
         this.angle += this.turnSpeed * Math.PI /180;
@@ -68,8 +103,30 @@ function car(width, height, color, x, y){
         this.y -= this.speed * Math.cos(this.angle);
     }
     this.shoot = function(){
+        this.gunAngle = Math.atan2((myGameArea.mouseY - this.y), (myGameArea.mouseX - this.x));
         console.log("Shoot");
-        myBullets.push(new bullet(10,10,this.x, this.y, this.angle));
+        myBullets.push(new bullet(10,10,this.x, this.y, this.gunAngle));
+
+    }
+    this.animate = function(){
+        if (tankCol == 2){
+            tankCol = 0;
+            tankRow +=1;
+        }
+        if (tankRow ==2){
+            tankRow=0;
+        }
+
+        ctx = myGameArea.context;
+        ctx.save();
+        ctx.translate(this.x + this.width/2,this.y + this.height/2);
+        ctx.rotate(this.angle);
+        var position = spritePostoImgPos(tankRow,tankCol);
+        ctx.drawImage(tankSpriteSheet, position.x, position.y, spriteSize,spriteSize,this.width/2 * (-1), this.height /2 *(-1), spriteSize * 1.5, spriteSize* 1.5);
+        //ctx.drawImage(gunSpriteSheet, 0, 0, spriteSize,spriteSize,(this.width/ -2) - 8, (this.height/-2) - 20, spriteSize*2, spriteSize*2);
+        ctx.restore();
+        tankCol +=1;
+
     }
     
 }
@@ -88,7 +145,7 @@ function bullet(width, height, x,y, angle){
         ctx.translate(this.x,this.y);
         ctx.rotate(this.angle);
         ctx.beginPath();
-        ctx.arc((this.width / -2) + 5, (this.height / -2)-  30, this.width/3, 0,2 * Math.PI);
+        ctx.arc((this.width / -2) + 14, (this.height / -2)-  44, this.width/3, 0,2 * Math.PI);
         ctx.fillStyle = "grey";
         ctx.fill()
         //ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
@@ -133,22 +190,20 @@ function getDist(X1,Y1,X2,Y2){
     return c;
 }
 
-for(let i = 0; i < myBullets.length; i++){
-    for(let j =0; j<myTargets.length; j++){
-            if(getDist())
-    }
-}
+
 
 
 function updateGameArea(){
+    tick +=1;
     myGameArea.clear();
     myCar.speed = 0;
     myCar.turnSpeed = 0;
     reloadTimer +=1;
-    if (myGameArea.keys && myGameArea.keys[37]) {myCar.turnSpeed = -1; }
-    if (myGameArea.keys && myGameArea.keys[39]) {myCar.turnSpeed = 1; }
-    if (myGameArea.keys && myGameArea.keys[38]) {myCar.speed = 1; }
-    if (myGameArea.keys && myGameArea.keys[40]) {myCar.speed = -1; }  
+    isAnimating = false;
+    if (myGameArea.keys && myGameArea.keys[37]) {myCar.turnSpeed = -1; isAnimating = true;}
+    if (myGameArea.keys && myGameArea.keys[39]) {myCar.turnSpeed = 1; isAnimating = true;}
+    if (myGameArea.keys && myGameArea.keys[38]) {myCar.speed = 1; isAnimating = true;}
+    if (myGameArea.keys && myGameArea.keys[40]) {myCar.speed = -1; isAnimating = true;}
     if (myGameArea.keys && myGameArea.keys[32]) {
         if(reloadTimer > reloadTime) {
             myCar.shoot(); 
@@ -157,7 +212,14 @@ function updateGameArea(){
     }
     
     myCar.move();
-    myCar.update();
+    if (isAnimating == true){
+        myCar.animate();
+    }else{
+        myCar.update();
+    }
+    myCar.gunUpdate();
+    
+
     if (myBullets.length > 0){
         for (let i =0; i< myBullets.length; i++){
             myBullets[i].update();
@@ -168,6 +230,15 @@ function updateGameArea(){
     if (myTargets.length > 0){
         for (let i =0; i< myTargets.length; i++){
             myTargets[i].update();
+        }
+    }
+
+    for(let i = 0; i < myBullets.length; i++){
+        for(let j =0; j<myTargets.length; j++){
+            if(getDist(myBullets[i].x, myBullets[i].y, myTargets[j].x,myTargets[j].y) < myTargets[j].width/2){
+                myBullets.splice(i,1);
+                myTargets.splice(j,1);
+            };
         }
     }
 

@@ -2,7 +2,7 @@ var myCar;
 var myBullets = [];
 var myTargets = [];
 var myPuddles = [];
-var targetAmount = 1  ;
+var targetAmount = 10 ;
 var puddleAmount = Math.floor((Math.random() * 10) + 2);
 var reloadTime = 60;
 var reloadTimer = 0;

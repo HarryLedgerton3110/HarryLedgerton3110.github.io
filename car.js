@@ -2,7 +2,7 @@ var myCar;
 var myBullets = [];
 var myTargets = [];
 var myPuddles = [];
-var targetAmount = 15  ;
+var targetAmount = 1  ;
 var puddleAmount = Math.floor((Math.random() * 10) + 2);
 var reloadTime = 60;
 var reloadTimer = 0;
@@ -30,6 +30,8 @@ var journalPageUnreal = new Image();
 journalPageUnreal.src = "JournalPage_Unreal.png";
 var journalPageJavascript = new Image();
 journalPageJavascript.src = "JournalPage_Javascript.png";
+var journalPageTargets = new Image();
+journalPageTargets.src = "JournalPage_Targets.png";
 var journalPagePPT = new Image();
 journalPagePPT.src = "JournalPage_PPT.png";
 var leftArrowSprite = new Image();
@@ -43,7 +45,8 @@ var gunCol = 0;
 var tick = 0;
 var canMove = true;
 var showBook = false;
-var page = 2;
+var page = 0;
+var canRead = false;
 //var rect = document.getElementById("canvas");
 
 
@@ -102,7 +105,7 @@ var myGameArea = {
                     console.log("click2");
                     canMove = true;
                     showBook = false;
-                    page = 0;
+                    
                 }
             }
 
@@ -126,13 +129,23 @@ var myGameArea = {
                if(myGameArea.mouseY > myGameArea.canvas.height*0.655 && myGameArea.mouseY < myGameArea.canvas.height*0.730){
                     if(page == 0){
                         console.log("Github");
+                        window.open("https://github.com/HarryLedgerton3110/HarryLedgerton3110.github.io");
                     }
                }
             }
-            if(myGameArea.mouseX > myGameArea.canvas.width*0.658 && myGameArea.mouseX < myGameArea.canvas.width*0.744){
+            if(myGameArea.mouseX > myGameArea.canvas.width*0.625 && myGameArea.mouseX < myGameArea.canvas.width*0.693){
                if(myGameArea.mouseY > myGameArea.canvas.height*0.66 && myGameArea.mouseY < myGameArea.canvas.height*0.733){
                     if(page == 1){
                         console.log("PDF");
+                        window.open("HarrisonLedgertonDissertation.pdf");
+                    }
+               }
+            }
+
+            if(myGameArea.mouseX > myGameArea.canvas.width*0.711 && myGameArea.mouseX < myGameArea.canvas.width*0.781){
+               if(myGameArea.mouseY > myGameArea.canvas.height*0.66 && myGameArea.mouseY < myGameArea.canvas.height*0.733){
+                    if(page == 1){
+                        window.open("https://www.youtube.com/watch?v=VRUABQEV_a0&t=9s");
                     }
                }
             }
@@ -343,13 +356,17 @@ function updateGameArea(){
 
     for(let i = 0; i < myBullets.length; i++){
         for(let j =0; j<myTargets.length; j++){
-            if(getDist(myBullets[i].x, myBullets[i].y, myTargets[j].x,myTargets[j].y) < myTargets[j].width/2){
+            if(getDist(myBullets[i].x, myBullets[i].y, myTargets[j].x,myTargets[j].y) < myTargets[j].width){
                 myBullets.splice(i,1);
                 myTargets.splice(j,1);
             };
         }
     }
 
+    if(myTargets.length == 0){
+        canRead = true;
+    }
+  
 
     if (canMove == true){
         myCar.move();
@@ -366,23 +383,27 @@ function updateGameArea(){
         ctx.drawImage(openBookSprite, 0, 0, 512,512, myGameArea.canvas.width / 5 ,0 ,myGameArea.canvas.width/1.5, (myGameArea.canvas.width/1.5));
         ctx.drawImage(leftArrowSprite,0,0,32,32,myGameArea.canvas.width / 6,myGameArea.canvas.height/2,64,64 );
         ctx.drawImage(rightArrowSprite,0,0,32,32,myGameArea.canvas.width / 6 + myGameArea.canvas.width/1.425,myGameArea.canvas.height/2,64,64 );
-        if(page == 0){
+        if(page == 0 && canRead == true){
             ctx.drawImage(journalPageTitle, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
             ctx.drawImage(journalPageJavascript, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
         }
-        if(page == 1){
+        if(page == 1 && canRead == true){
             ctx.drawImage(journalPageDiss1, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
             ctx.drawImage(journalPageDiss2, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
         }
-        if(page == 2){
+        if(page == 2 && canRead == true){
             ctx.drawImage(journalPageUnreal, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
             ctx.drawImage(journalPagePPT, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+        }
+        if(canRead == false){
+            ctx.drawImage(journalPageTargets, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+            ctx.drawImage(journalPageTargets, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
         }
 
     }
 
     ctx.drawImage(bookSprite, 0, 0, 32,32,myGameArea.canvas.width/50 ,myGameArea.canvas.height - (myGameArea.canvas.height/15),64, 64)
-
+    //console.log(myTargets.length);
     
 
 }

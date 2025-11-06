@@ -2,7 +2,7 @@ var myCar;
 var myBullets = [];
 var myTargets = [];
 var myPuddles = [];
-var targetAmount = 4;
+var targetAmount = 15  ;
 var puddleAmount = Math.floor((Math.random() * 10) + 2);
 var reloadTime = 60;
 var reloadTimer = 0;
@@ -20,6 +20,22 @@ var bookSprite = new Image();
 bookSprite.src = "Book.png";
 var openBookSprite = new Image();
 openBookSprite.src = "OpenBook.png";
+var journalPageTitle = new Image();
+journalPageTitle.src = "JournalPage_Title.png";
+var journalPageDiss1 = new Image();
+journalPageDiss1.src = "JournalPage_Dissertation1.png";
+var journalPageDiss2 = new Image();
+journalPageDiss2.src = "JournalPage_Dissertation2.png";
+var journalPageUnreal = new Image();
+journalPageUnreal.src = "JournalPage_Unreal.png";
+var journalPageJavascript = new Image();
+journalPageJavascript.src = "JournalPage_Javascript.png";
+var journalPagePPT = new Image();
+journalPagePPT.src = "JournalPage_PPT.png";
+var leftArrowSprite = new Image();
+leftArrowSprite.src = "LeftArrow.png";
+var rightArrowSprite = new Image();
+rightArrowSprite.src = "RightArrow.png";
 var tankRow = 0;
 var tankCol = 0;
 var gunRow = 0;
@@ -27,6 +43,7 @@ var gunCol = 0;
 var tick = 0;
 var canMove = true;
 var showBook = false;
+var page = 2;
 //var rect = document.getElementById("canvas");
 
 
@@ -70,21 +87,60 @@ var myGameArea = {
             var mousePos = getMousePos(myGameArea.canvas, e);
             myGameArea.mouseX = mousePos.x;
             myGameArea.mouseY = mousePos.y;
+            console.log("X: ", myGameArea.mouseX, "Y: ", myGameArea.mouseY);
             if(myGameArea.mouseX > myGameArea.canvas.width/50 && myGameArea.mouseX < myGameArea.canvas.width/50 +64){
                 if(myGameArea.mouseY >myGameArea.canvas.height - (myGameArea.canvas.height/15) && myGameArea.mouseX < myGameArea.canvas.height - (myGameArea.canvas.height/15) +64){
                     console.log("Clicked");
                     canMove = false;
-                    showBook = true;                   
+                    showBook = true;
+                
                 }
             }
 
-            if(myGameArea.mouseX > myGameArea.canvas.width / 5 + (myGameArea.canvas.width/2-150) && myGameArea.mouseX < myGameArea.canvas.width / 5 +myGameArea.canvas.width/2){
-                if(myGameArea.mouseY > myGameArea.canvas.height - (myGameArea.canvas.height/1.1) && myGameArea.mouseY < myGameArea.canvas.height - (myGameArea.canvas.height/1.1) + 512){ 
+            if(myGameArea.mouseX > myGameArea.canvas.width / 5 + (myGameArea.canvas.width/1.767) && myGameArea.mouseX < myGameArea.canvas.width / 5 + myGameArea.canvas.width/1.5){
+                if(myGameArea.mouseY > myGameArea.canvas.height - (myGameArea.canvas.height/1.01) && myGameArea.mouseY < myGameArea.canvas.height - (myGameArea.canvas.height/1.126)){ 
                     console.log("click2");
                     canMove = true;
                     showBook = false;
+                    page = 0;
                 }
             }
+
+            if(myGameArea.mouseX > myGameArea.canvas.width / 6 && myGameArea.mouseX<myGameArea.canvas.width/6 +64){
+                if(myGameArea.mouseY > myGameArea.canvas.height/2 && myGameArea.mouseY < myGameArea.canvas.height/2 +64){
+                    if((page > 0 && page <=2) && showBook == true){
+                        page -= 1;
+                    }
+                }
+            } 
+
+            if(myGameArea.mouseX > myGameArea.canvas.width / 6 + myGameArea.canvas.width/1.425 && myGameArea.mouseX<myGameArea.canvas.width / 6 + myGameArea.canvas.width/1.425 +64){
+                if(myGameArea.mouseY > myGameArea.canvas.height/2 && myGameArea.mouseY < myGameArea.canvas.height/2 +64){
+                    if((page>=0 && page <2) && showBook == true){
+                        page += 1;
+                    }
+                }
+            }
+            
+            if(myGameArea.mouseX > myGameArea.canvas.width*0.657 && myGameArea.mouseX < myGameArea.canvas.width*0.745){
+               if(myGameArea.mouseY > myGameArea.canvas.height*0.655 && myGameArea.mouseY < myGameArea.canvas.height*0.730){
+                    if(page == 0){
+                        console.log("Github");
+                    }
+               }
+            }
+            if(myGameArea.mouseX > myGameArea.canvas.width*0.658 && myGameArea.mouseX < myGameArea.canvas.width*0.744){
+               if(myGameArea.mouseY > myGameArea.canvas.height*0.66 && myGameArea.mouseY < myGameArea.canvas.height*0.733){
+                    if(page == 1){
+                        console.log("PDF");
+                    }
+               }
+            }
+
+
+
+            //if (myGameArea.mouseX > )
+
         })
     },
     clear : function(){
@@ -307,7 +363,22 @@ function updateGameArea(){
 
     if(showBook == true){
         console.log("test");
-        ctx.drawImage(openBookSprite, 0, 0, 512,512, myGameArea.canvas.width / 5 ,myGameArea.canvas.height - (myGameArea.canvas.height/1.1),myGameArea.canvas.width/2, (myGameArea.canvas.width/2));
+        ctx.drawImage(openBookSprite, 0, 0, 512,512, myGameArea.canvas.width / 5 ,0 ,myGameArea.canvas.width/1.5, (myGameArea.canvas.width/1.5));
+        ctx.drawImage(leftArrowSprite,0,0,32,32,myGameArea.canvas.width / 6,myGameArea.canvas.height/2,64,64 );
+        ctx.drawImage(rightArrowSprite,0,0,32,32,myGameArea.canvas.width / 6 + myGameArea.canvas.width/1.425,myGameArea.canvas.height/2,64,64 );
+        if(page == 0){
+            ctx.drawImage(journalPageTitle, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+            ctx.drawImage(journalPageJavascript, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+        }
+        if(page == 1){
+            ctx.drawImage(journalPageDiss1, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+            ctx.drawImage(journalPageDiss2, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+        }
+        if(page == 2){
+            ctx.drawImage(journalPageUnreal, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.063) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+            ctx.drawImage(journalPagePPT, 0, 0, 787,1117, (myGameArea.canvas.width / 5) + (myGameArea.canvas.width*0.4) ,myGameArea.canvas.height - (myGameArea.canvas.height * 0.709),myGameArea.canvas.width/4.968, (myGameArea.canvas.width/3.5));
+        }
+
     }
 
     ctx.drawImage(bookSprite, 0, 0, 32,32,myGameArea.canvas.width/50 ,myGameArea.canvas.height - (myGameArea.canvas.height/15),64, 64)

@@ -232,7 +232,7 @@ function spawnTargets(){
     //console.log("test1");
     for(let i =0; i<targetAmount; i++){
         console.log("Game area", myGameArea.canvas.width);
-        myTargets.push(new target(30,30, Math.random() * myGameArea.canvas.width, Math.random() * myGameArea.canvas.height,Math.random()*360));
+        myTargets.push(new target(30,30, Math.floor(Math.random() * (myGameArea.canvas.width-50)) + 50, Math.floor( Math.random() * (myGameArea.canvas.height-100))+50,Math.random()*360));
     }
 }
 
@@ -324,6 +324,11 @@ function updateGameArea(){
     myCar.turnSpeed = 0;
     reloadTimer +=1;
     isAnimating = false;
+    myGameArea.context.font = "30px Arial";
+    myGameArea.context.fillText("Controls: ", 20,30);
+    myGameArea.context.fillText("WASD - Move", 20, 65);
+    myGameArea.context.fillText("Space - Shoot", 20, 100);
+    myGameArea.context.fillText("Mouse - Aim", 20, 135);
     if (myGameArea.keys && myGameArea.keys[65]) {myCar.turnSpeed = -1; isAnimating = true;}
     if (myGameArea.keys && myGameArea.keys[68]) {myCar.turnSpeed = 1; isAnimating = true;}
     if (myGameArea.keys && myGameArea.keys[87]) {myCar.speed = 1; isAnimating = true;}
